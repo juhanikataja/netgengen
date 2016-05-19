@@ -20,6 +20,12 @@ function ComposeModifiers(flags...)
   return output
 end
 
+"""
+`function tlo(E::CSGObject, buf=STDOUT; flags...)`
+
+Prints out netgen string of `E` to buffer `buf` and appends `flags` to the end of the string
+
+"""
 function tlo(E::CSGObject, buf=STDOUT; flags...)
   if !(E.declared)
     declare(E,buf)
@@ -27,6 +33,13 @@ function tlo(E::CSGObject, buf=STDOUT; flags...)
   print(buf, "tlo ", csgstring(E), ComposeModifiers(flags...), ";\n")
 end
 
+"""
+`type not`
+
+`not(E)` constructs complement of `E`
+
+`not(name, E; modifiers...)` constructs complement of `E`, assigns it with ASCIIString `name` and `modifiers...`
+"""
 type not <: CSGCompositeObject
   name::ASCIIString
   E::Array{CSGObject,1}
@@ -43,6 +56,18 @@ type not <: CSGCompositeObject
   not(name, E; modifiers...) = (x = not(E); x.name=name; x.modifiers = ComposeModifiers(modifiers...); return x)
 end
 
+"""
+`type torus`
+
+`torus(p,q,m,n)` constructs torus from length 3 vectors `p`,`q` and scalars `m` and `n` where
+
+* `p` is the center of the torus
+* `q` is the normal vector to the torus
+* `m` is the distance from center to the center of the torus ring
+* `n` is the radius of the torus ring
+
+`torus(name,p,q,m,n;modifiers...)` same as above but assigns it with `name` and `modifiers...`
+"""
 type torus <: CSGObject
   name::ASCIIString
   p::Array{AbstractFloat, 1}
@@ -70,6 +95,17 @@ type torus <: CSGObject
     return x)
 end
 
+"""
+`type cylinder`
+
+`cylinder(p,q,r)` constructs cylinder where
+
+* `p` and `q` are length 3 vectors for endpoints of the cylinder and `r` is the radius of the cylinder
+
+`cylinder(name,p,q,r;modifiers...)`
+
+* same as above but adds `name` and `modifiers...`
+"""
 type cylinder <: CSGObject
   name::ASCIIString
   p::Array{AbstractFloat, 1}
@@ -95,6 +131,14 @@ type cylinder <: CSGObject
     return x)
 end
 
+"""
+`type plane`
+
+`plane(p,n)` constructs half space where
+
+* `p` is a point on its boundary and
+* `n` outside normal vector to the plane
+"""
 type plane <: CSGObject
   name::ASCIIString
   p::Array{AbstractFloat, 1}
@@ -119,6 +163,11 @@ type plane <: CSGObject
     return x)
 end
 
+"""
+`type brick`
+
+`brick(p,q)` constructs 3D interval where with coordinate minima in vector `p` and maxima in `q`
+"""
 type brick <: CSGObject
   name::ASCIIString
   p::Array{AbstractFloat, 1}
@@ -243,6 +292,11 @@ function MakeExpression!{T}(object::T)
   error("Not done!")
 end
 
+"""
+`type sphere`
+
+`sphere(c,R)` construct sphere with center `c` and radius `R`
+"""
 type sphere <: CSGObject
   name::ASCIIString
   c::Array{AbstractFloat, 1}
@@ -292,6 +346,13 @@ type revolution <: CSGObject
     return x)
 end
 
+"""
+`type csgunion`
+
+`csgunion(E)` constructs union of objects in array `E`
+
+`csgunion(name,E,modifiers...)` constructs union of objects in array `E` and assigns it with `name` and `modifiers...`
+"""
 type csgunion <: CSGCompositeObject
   name::ASCIIString
   E::Array{CSGObject,1}
@@ -314,6 +375,12 @@ type csgunion <: CSGCompositeObject
     return x)
 end
 
+"""
+`type intersection`
+
+`intersection(E)` constructs intersection of objects in array `E`
+`intersection(name,E,modifiers...)` constructs intersection of objects in array `E` and assigns it with `name` and `modifiers...`
+"""
 type intersection <: CSGCompositeObject
   name::ASCIIString
   E::Array{CSGObject,1}
@@ -344,7 +411,6 @@ function declare(A::CSGCompositeObject, buf=STDOUT)
   for sub_obj in A.E
     if(!sub_obj.declared) 
       declare(sub_obj, buf)
-      #=retstr = join([declare(sub_obj), retstr])=#
     end
   end
   A.declared = true
@@ -353,7 +419,6 @@ function declare(A::CSGCompositeObject, buf=STDOUT)
   end
   println(buf, "solid ", A.name, " = ", A.expr, A.modifiers, ";")
   return true
-  #=return join([retstr, string("solid ", A.name, " = ", A.expr, A.modifiers, ";\n")])=#
 end
 
 function declare(A::CSGPrimitive, buf=STDOUT)
@@ -366,7 +431,6 @@ function declare(A::CSGPrimitive, buf=STDOUT)
     return true
   end
    println(buf, "solid ", A.name, " = ", A.expr, A.modifiers, ";")
-  #=return string("solid ", A.name, " = ", A.expr, A.modifiers, ";\n")=#
   return true
 end
 
@@ -381,7 +445,6 @@ function declare(A::CSGObject, buf=STDOUT)
   end
   println(buf, "solid ", A.name, " = ", A.expr, A.modifiers, ";")
   return true
-  #=return string("solid ", A.name, " = ", A.expr, A.modifiers, ";\n")=#
 end
 
 function declare(A::CurveObject, buf=STDOUT)

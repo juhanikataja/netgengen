@@ -2,9 +2,27 @@
 
 [![Build Status](https://travis-ci.org/juhanikataja/netgengen.jl.svg?branch=master)](https://travis-ci.org/juhanikataja/netgengen.jl)
 
-A netgen algebraic3d CSG '''.geo'''-file generator for Julia. 
+A netgen algebraic3d CSG `.geo`-file generator for Julia. 
 
-*Example use*:
+## Exported types and functions
+
+Documented ones:
+
+* torus
+* plane
+* brick
+* cylinder
+* sphere
+* csgunion
+* not
+* intersection
+* tlo
+
+Undocumented
+
+* CSGObject, csgstring, declare, curve2d, LineObject, revolution, CurveObject
+
+## Example use
 
         laatikko = brick("laatikko", [0.0,0.0,0.0],[1.0,1.0,1.0])
         loota = brick("loota", [0.0,0.0,0.0],[1.0,0.5,2.0])
