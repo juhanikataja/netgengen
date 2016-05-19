@@ -3,7 +3,9 @@
 
 [![Build Status](https://travis-ci.org/juhanikataja/netgengen.jl.svg?branch=master)](https://travis-ci.org/juhanikataja/netgengen.jl)
 
-*But why?* Because the native `.geo` format is cumbersome when it comes to parametrizing and keeping track that objects are declared.
+*What?* CSG `.geo` file generator for NETGEN (http://www.hpfem.jku.at/netgen/)
+
+*Why?* Because the native `.geo` format is cumbersome when it comes to parametrizing and keeping track that objects are declared.
 
 ## Exported types and functions
 
