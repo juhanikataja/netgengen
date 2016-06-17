@@ -146,12 +146,12 @@ type plane <: CSGObject
   expr::ASCIIString
   modifiers::ASCIIString
   declared::Bool
-  plane(p,n) = (
+  plane(p,n;modifiers...) = (
     x = new();
     x.p = p;
     x.n = n;
     x.expr = string("plane ($(x.p[1]), $(x.p[2]),$(x.p[3]); $(x.n[1]), $(x.n[2]), $(x.n[3]))");
-    x.modifiers = "";
+    x.modifiers = ComposeModifiers(modifiers...);
     x.declared = false;
     x.name = "";
     return x)
@@ -467,5 +467,21 @@ function evalexpr(A::intersection)
   end
   S = string(S, csgstring(A.E[length(A.E)]))
 end
+
+# Utility functions
+function finitecylinder(name, p,q,r; modifiers...)
+  return intersection(name, [
+      cylinder(p,q,r), 
+      plane(p,p-q; bc=a),
+      plane(q,q-p; bc=b)]; modifiers...)
+end 
+
+function finitecylinder(name, p,q,r, a, b; modifiers...)
+  plane_a = plane(string(name, "_", a), p,p-q; bc=a)
+  plane_b = plane(string(name, "_", b), q,q-p; bc=b)
+  return intersection(name, [
+      cylinder(p,q,r), 
+      plane_a, plane_b]; modifiers...)
+end 
 
 end 
