@@ -1,10 +1,10 @@
 module netgengen
 
-abstract CSGObject
-abstract LineObject
-abstract CurveObject <: LineObject
-abstract CSGCompositeObject <: CSGObject
-abstract CSGPrimitive <: CSGObject
+abstract type CSGObject end
+abstract type LineObject end
+abstract type CurveObject <: LineObject end
+abstract type CSGCompositeObject <: CSGObject end
+abstract type CSGPrimitive <: CSGObject end
 
 export torus, plane, CSGObject, brick, csgunion, csgstring, declare, not, cylinder, sphere, tlo, intersection, curve2d, LineObject, revolution, CurveObject
 
@@ -38,13 +38,13 @@ end
 
 `not(E)` constructs complement of `E`
 
-`not(name, E; modifiers...)` constructs complement of `E`, assigns it with ASCIIString `name` and `modifiers...`
+`not(name, E; modifiers...)` constructs complement of `E`, assigns it with String `name` and `modifiers...`
 """
 type not <: CSGCompositeObject
-  name::ASCIIString
+  name::String
   E::Array{CSGObject,1}
-  expr::ASCIIString
-  modifiers::ASCIIString
+  expr::String
+  modifiers::String
   declared::Bool
   not(E) = (x = new();
     x.E = [E];
@@ -69,13 +69,13 @@ end
 `torus(name,p,q,m,n;modifiers...)` same as above but assigns it with `name` and `modifiers...`
 """
 type torus <: CSGObject
-  name::ASCIIString
+  name::String
   p::Array{AbstractFloat, 1}
   q::Array{AbstractFloat, 1}
   m::AbstractFloat
   n::AbstractFloat
-  expr::ASCIIString
-  modifiers::ASCIIString
+  expr::String
+  modifiers::String
   declared::Bool
   torus(p,q,m,n) = (
     x = new();
@@ -107,12 +107,12 @@ end
 * same as above but adds `name` and `modifiers...`
 """
 type cylinder <: CSGObject
-  name::ASCIIString
+  name::String
   p::Array{AbstractFloat, 1}
   q::Array{AbstractFloat, 1}
   r::AbstractFloat
-  expr::ASCIIString
-  modifiers::ASCIIString
+  expr::String
+  modifiers::String
   declared::Bool
   cylinder(p,q,r) = (
     x = new();
@@ -140,11 +140,11 @@ end
 * `n` outside normal vector to the plane
 """
 type plane <: CSGObject
-  name::ASCIIString
+  name::String
   p::Array{AbstractFloat, 1}
   n::Array{AbstractFloat, 1}
-  expr::ASCIIString
-  modifiers::ASCIIString
+  expr::String
+  modifiers::String
   declared::Bool
   plane(p,n;modifiers...) = (
     x = new();
@@ -155,7 +155,7 @@ type plane <: CSGObject
     x.declared = false;
     x.name = "";
     return x)
-  plane(name::ASCIIString, p, n; modifiers...) = (
+  plane(name::String, p, n; modifiers...) = (
     x = plane(p,n);
     x.name=name;
     x.modifiers = ComposeModifiers(modifiers...);
@@ -169,11 +169,11 @@ end
 `brick(p,q)` constructs 3D interval where with coordinate minima in vector `p` and maxima in `q`
 """
 type brick <: CSGObject
-  name::ASCIIString
+  name::String
   p::Array{AbstractFloat, 1}
   q::Array{AbstractFloat, 1}
-  expr::ASCIIString
-  modifiers::ASCIIString
+  expr::String
+  modifiers::String
   declared::Bool
   brick(p,q) = (
     x = new();
@@ -184,7 +184,7 @@ type brick <: CSGObject
     x.declared = false;
     x.name = "";
     return x)
-  brick(name::ASCIIString, p, q; modifiers...) = (
+  brick(name::String, p, q; modifiers...) = (
     x = brick(p,q);
     x.name = name;
     x.modifiers = ComposeModifiers(modifiers...);
@@ -193,13 +193,13 @@ type brick <: CSGObject
 end
 
 type curve3d <: CurveObject
-  name::ASCIIString
+  name::String
   np::Integer
   ns::Integer
   p::Array{Float64, 2}
   t::Array{Array{Integer,1},1}
-  expr::ASCIIString
-  modifiers::ASCIIString
+  expr::String
+  modifiers::String
   declared::Bool
   curve3d(name, p,t) = (
     x = new();
@@ -214,13 +214,13 @@ type curve3d <: CurveObject
 end
 
 type curve2d <: CurveObject
-  name::ASCIIString
+  name::String
   np::Integer
   ns::Integer
   p::Array{Float64, 2}
   t::Array{Array{Integer,1},1}
-  expr::ASCIIString
-  modifiers::ASCIIString
+  expr::String
+  modifiers::String
   declared::Bool
   curve2d(name, p,t) = (
     x = new();
@@ -298,11 +298,11 @@ end
 `sphere(c,R)` construct sphere with center `c` and radius `R`
 """
 type sphere <: CSGObject
-  name::ASCIIString
+  name::String
   c::Array{AbstractFloat, 1}
   R::AbstractFloat
-  expr::ASCIIString
-  modifiers::ASCIIString
+  expr::String
+  modifiers::String
   declared::Bool
   sphere(c,R) = (
     x = new();
@@ -322,12 +322,12 @@ type sphere <: CSGObject
 end
 
 type revolution <: CSGObject
-  name::ASCIIString
+  name::String
   p1::Array{AbstractFloat,1}
   p2::Array{AbstractFloat,1}
-  curvename::ASCIIString
-  expr::ASCIIString
-  modifiers::ASCIIString
+  curvename::String
+  expr::String
+  modifiers::String
   declared::Bool
   revolution(p1,p2,curvename) = (
     x = new();
@@ -354,10 +354,10 @@ end
 `csgunion(name,E,modifiers...)` constructs union of objects in array `E` and assigns it with `name` and `modifiers...`
 """
 type csgunion <: CSGCompositeObject
-  name::ASCIIString
+  name::String
   E::Array{CSGObject,1}
-  expr::ASCIIString
-  modifiers::ASCIIString
+  expr::String
+  modifiers::String
   declared::Bool
   csgunion(E) = (
     x = new();
@@ -382,10 +382,10 @@ end
 `intersection(name,E,modifiers...)` constructs intersection of objects in array `E` and assigns it with `name` and `modifiers...`
 """
 type intersection <: CSGCompositeObject
-  name::ASCIIString
+  name::String
   E::Array{CSGObject,1}
-  expr::ASCIIString
-  modifiers::ASCIIString
+  expr::String
+  modifiers::String
   declared::Bool
   intersection(E) = (
     x = new();
@@ -430,7 +430,7 @@ function declare(A::CSGPrimitive, buf=STDOUT)
   if A.name == ""
     return true
   end
-   println(buf, "solid ", A.name, " = ", A.expr, A.modifiers, ";")
+  println(buf, "solid ", A.name, " = ", A.expr, A.modifiers, ";")
   return true
 end
 
